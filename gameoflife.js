@@ -40,26 +40,28 @@ class GameOfLife {
     }
     
     updateGridSize() {
-        const containerPadding = 40; // padding around game container
-        const maxWidth = Math.min(window.innerWidth - containerPadding, 800);
-        const maxHeight = Math.min(window.innerHeight - 120 - containerPadding, 600); // account for header
+        // Use full screen dimensions
+        const fullWidth = window.innerWidth;
+        const fullHeight = window.innerHeight;
         
         // Calculate optimal cell size based on available space
-        if (maxWidth <= 600) {
+        if (fullWidth <= 600) {
+            this.cellSize = 4;
+        } else if (fullWidth <= 800) {
+            this.cellSize = 6;
+        } else if (fullWidth <= 1200) {
             this.cellSize = 8;
-        } else if (maxWidth <= 800) {
-            this.cellSize = 10;
         } else {
-            this.cellSize = 12;
+            this.cellSize = 10;
         }
         
         // Calculate grid dimensions based on cell size
-        this.cols = Math.floor(maxWidth / this.cellSize);
-        this.rows = Math.floor(maxHeight / this.cellSize);
+        this.cols = Math.floor(fullWidth / this.cellSize);
+        this.rows = Math.floor(fullHeight / this.cellSize);
         
-        // Adjust canvas size to fit grid exactly
-        this.canvas.width = this.cols * this.cellSize;
-        this.canvas.height = this.rows * this.cellSize;
+        // Set canvas to full screen
+        this.canvas.width = fullWidth;
+        this.canvas.height = fullHeight;
     }
     
     initGrids() {
@@ -130,25 +132,7 @@ class GameOfLife {
         this.ctx.fillStyle = this.deadColor;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw grid lines (optional, creates cleaner look)
-        this.ctx.strokeStyle = '#e0e0e0';
-        this.ctx.lineWidth = 0.5;
-        
-        // Vertical lines
-        for (let x = 0; x <= this.cols; x++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(x * this.cellSize, 0);
-            this.ctx.lineTo(x * this.cellSize, this.canvas.height);
-            this.ctx.stroke();
-        }
-        
-        // Horizontal lines
-        for (let y = 0; y <= this.rows; y++) {
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, y * this.cellSize);
-            this.ctx.lineTo(this.canvas.width, y * this.cellSize);
-            this.ctx.stroke();
-        }
+        // Grid lines removed for cleaner fullscreen look
         
         // Draw alive cells
         this.ctx.fillStyle = this.aliveColor;
@@ -157,23 +141,14 @@ class GameOfLife {
                 if (this.grid[row][col]) {
                     const x = col * this.cellSize;
                     const y = row * this.cellSize;
-                    this.ctx.fillRect(x + 0.5, y + 0.5, this.cellSize - 1, this.cellSize - 1);
+                    this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
                 }
             }
         }
     }
     
     updateStats() {
-        let aliveCount = 0;
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.cols; col++) {
-                if (this.grid[row][col]) aliveCount++;
-            }
-        }
-        
-        document.getElementById('generation').textContent = this.generation;
-        document.getElementById('aliveCount').textContent = aliveCount;
-        document.getElementById('gridSize').textContent = `${this.cols}x${this.rows}`;
+        // Stats removed - no UI elements to update
     }
     
     play() {
